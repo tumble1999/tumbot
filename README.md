@@ -20,15 +20,13 @@ yarn start
 * Runtime Config (Dynamic Module Data)
 * Guild Config (Webpanel Settings)
 
-## Ideas
-
-* Interview System
-* Custom Command
-* JSON Tracker
-* Vote system
-* Phone Bot
-* Quiz?
-* Languages
+## Ideas (and the bots i origianly had the feature in)
+* Interview System (TumbleNet Bot)
+* JSON Tracker (iTrackBC)
+* Content of the week Voting system 
+* Phone Bot (PolyPickle)
+* Quiz? (WWTBAM bot)
+* Languages (ITrackBC)
 * Permissions
 	* Role based
 	* Channel Based
