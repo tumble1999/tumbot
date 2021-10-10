@@ -1,0 +1,21 @@
+{
+	"discordBot": {
+		"lang": "en-gb",
+		"token": "",
+		"owner": "",
+		"guilds": [
+			"serverIds"
+		],
+		"prefix": "=test ",
+		"commands": {
+			"help": true,
+			"ping": true,
+			"eval": false
+		}
+	},
+	"test": {
+		"commands": {
+			"hello": true
+		}
+	}
+}

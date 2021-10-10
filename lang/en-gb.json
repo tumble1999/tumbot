@@ -1,0 +1,10 @@
+{
+	"HELP_HEADER": "**Commands:**",
+	"HELP_FOOTER": "This bot in under development",
+	"HELP_EMPTY": "There are no commands available to you.",
+	"CMD_HELP_DESC": "Get a list of commands and how to use them",
+	"CMD_PING_DESC": "Get the ping time of the bot.",
+	"CMD_HELLO_DESC": "I am a test command",
+	"CMD_EVAL_DESC": "Evaluate some js",
+	"PING_RESPONSE": "Ping: $PINGms"
+}
