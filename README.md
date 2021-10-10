@@ -20,12 +20,6 @@ yarn start
 * Runtime Config (Dynamic Module Data)
 * Guild Config (Webpanel Settings)
 
-## Module
-Init(globalConfig)
-GetCommands(guildConfig) - get commands
-
-
-
 ## Ideas
 
 * Interview System
