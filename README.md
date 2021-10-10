@@ -65,10 +65,5 @@ yarn start
 * Yarn
 * GitHub Pages
 * Jekyll
-
-* Either Firebase
-or
-* Supabase
-or
-* MongoDB Atlas
-* Heroku or Raspberry Pi
+* Either Firebase or Supabase or MongoDB Atlas
+* Heroku or Raspberry Pi or Firebase or Supabase
