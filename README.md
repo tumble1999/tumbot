@@ -1,6 +1,5 @@
-# Tumble's Utility Bot
-
-# Setting up
+# Tumbot
+## Setting up
 ```bash
 #Setup node
 nvm install # this will use .nvmrc automatically
