@@ -1,4 +1,10 @@
 {
+  "name": "tumbot",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "repository": "https://github.com/tumble1999/tumbot.git",
+  "author": "Tumble <tumblegamer@gmail.com>",
+  "license": "GPL-3.0",
   "scripts": {
     "test": "jest --watchAll --verbose",
     "start": "node src/index.js",
