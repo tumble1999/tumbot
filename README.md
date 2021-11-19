@@ -47,9 +47,10 @@ yarn start
 * Modules or Features
 
 ## Hosting Options
-* Database -  Either Firebase, Supabase or MongoDB Atlas
+* Database -  Either MongoDB Atlas
 * Web Panel - Hopefully GitHub Pages and Jekyll
-* Discord Bot - Figure out if firebase has hosting, if not then use Raspberry Pi or Heroku
+* Discord Bot -  Raspberry Pi or Heroku
+
 
 ## Stack
 ### Frontend
