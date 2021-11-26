@@ -1,6 +1,4 @@
 const bot = require("./bot");
-
-
 let db = [
 	{
 		id: "all",
@@ -12,23 +10,26 @@ let db = [
 		],
 		modules: {
 			core: {
-				nickname: ""
+				test: ""
 			}
 		}
 	}
 ];
 
-function getServers() {
+async function getServers() {
 	if (Tumbot.global.servers) {
 		return Tumbot.global.servers;
 	}
-	return db.map(server => server.id);
+
+	return [...new Set([
+		...db.map(s => s.id),
+		...(await Tumbot.bot.client.guilds.fetch()).map(s => s.id)
+	])];
 }
 
 function getServer(id = "all") {
 	if (Tumbot.global.modules) return Tumbot.global;
-	let serverId = db.findIndex(server => server.id == id),
-	server = db[serverId];
+	let server = db.find(server => server.id == id);
 	if (!server) {
 		server = {
 			id,
@@ -93,14 +94,14 @@ function getModules(serverId) {
 }
 
 function getModule({ serverId, moduleId }) {
-	let module = getServer(serverId).modules[moduleId] | {};
+	let module = getServer(serverId).modules[moduleId] || {};
 	module = Object.assign({}, getServer().modules[moduleId],
 		typeof module == "object" ? module : {}
 	);
 	return module;
 }
 
-function updateModule({serverId,moduleId,moduleConfig}) {
+function updateModule({ serverId, moduleId, moduleConfig }) {
 	getServer(serverId).modules[moduleId] = moduleConfig;
 }
 
