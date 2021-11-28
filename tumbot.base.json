@@ -1,4 +1,5 @@
 {
 	"port":3000,
-	"token":"abc123"
+	"token":"abc123",
+	"owners":["12345"]
 }
