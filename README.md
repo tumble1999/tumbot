@@ -20,12 +20,12 @@ yarn start
 * Guild Config (Webpanel Settings)
 
 ## Ideas (and the bots i origianly had the feature in)
-* Interview System (TumbleNet Bot)
-* JSON Tracker (iTrackBC)
+* Interview System ([TumbleNet Bot](https://github.com/tumblenet/TumbleNet-Discord-Node))
+* JSON Tracker ([iTrackBC](https://github.com/boxcrittersmods/community-tracker))
 * Content of the week Voting system 
-* Phone Bot (PolyPickle)
-* Quiz? (WWTBAM bot)
-* Languages (ITrackBC)
+* Phone Bot ([PolyPickle](https://github.com/tumblenet/discordPhoneBot))
+* Quiz? ([WWTBAM bot](https://github.com/tumble1999/wwtbamDiscordBot))
+* Languages ([ITrackBC](https://github.com/boxcrittersmods/community-tracker))
 * Permissions
 	* Role based
 	* Channel Based
