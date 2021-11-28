@@ -1,12 +1,10 @@
-const { registerCommand } = require("./commands");
-
 function clean(text) {
 	if (typeof (text) === "object")
 		text = "```json\n" + JSON.stringify(text, null, 2).toString() + "```";
 	else
 		text = text.toString().replace(/`/g, "`" + String.fromCharCode(8203)).replace(/@/g, "@" + String.fromCharCode(8203));
 
-	return text.split(Tumbot.global.discordBot.token).join("*********");
+	return text.split(Tumbot.global.token).join("*********");
 }
 
 function eval(code, context) {
@@ -15,10 +13,9 @@ function eval(code, context) {
 }
 
 function setupEval() {
-	registerCommand("discordBot", "eval", {
-		perms: member => {
-			console.log({ o: Tumbot.global.discordBot.owner, i: member.id });
-			return Tumbot.global.discordBot.owner === member.id;
+	Tumbot.cmd.registerCommand("core", "eval", {
+		perms: message => {
+			return Tumbot.global.owners.includes(message.author.id);
 		},
 		call: (message, args) => {
 			try {

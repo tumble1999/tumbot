@@ -6,5 +6,6 @@
 	"CMD_PING_DESC": "Get the ping time of the bot.",
 	"CMD_HELLO_DESC": "I am a test command",
 	"CMD_EVAL_DESC": "Evaluate some js",
-	"PING_RESPONSE": "Ping: $PINGms"
+	"PING_RESPONSE": "Ping: $PINGms",
+	"MODULE_CORE_NAME":"Core"
 }
