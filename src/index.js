@@ -1,11 +1,18 @@
+const path = require("path");
+
 global.Tumbot = {
 	global:require("../tumbot.json"),
-	modules:{}
+	root: path.join(__dirname, "..")
 };
 Tumbot.global = require("../tumbot.json");
 Tumbot.config = require("./api/config");
-Tumbot.server = require("./api/server")
+Tumbot.lang = require("./api/lang");
+Tumbot.server = require("./api/server");
 Tumbot.bot = require("./api/bot");
+Tumbot.cmd = require("./api/cmd");
+Tumbot.perms = require("./api/perms");
+
+
 
 (async ()=>{
 	Tumbot.modules = {};

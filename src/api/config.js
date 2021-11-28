@@ -2,16 +2,16 @@ const bot = require("./bot");
 let db = [
 	{
 		id: "all",
-		users: [
-			{
-				id: "12345",
-				type: "user", //user,role
-			}
-		],
-		modules: {
-			core: {
-				test: ""
-			}
+		modules:{
+			core:{
+				nickname:"Tumbot Unstable",
+				prefix:"!",
+				lang:"en-gb",
+				commands:{
+					help:true,
+					ping:[{type:"channel",id:"896401319835873280"}]
+				}
+			},
 		}
 	}
 ];
@@ -32,9 +32,7 @@ function getServer(id = "all") {
 	let server = db.find(server => server.id == id);
 	if (!server) {
 		server = {
-			id,
-			users: [],
-			modules: {}
+			id
 		};
 		db.push(server);
 	}
@@ -94,7 +92,9 @@ function getModules(serverId) {
 }
 
 function getModule({ serverId, moduleId }) {
-	let module = getServer(serverId).modules[moduleId] || {};
+	let server = getServer(serverId);
+	if(!server.modules)server.modules = {};
+	let module = server.modules[moduleId] || {};
 	module = Object.assign({}, getServer().modules[moduleId],
 		typeof module == "object" ? module : {}
 	);

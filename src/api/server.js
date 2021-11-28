@@ -1,8 +1,7 @@
 const
 	express = require("express"),
 	http = require('http'),
-	{ Server } = require("socket.io"),
-	config = require("./config");
+	{ Server } = require("socket.io");
 
 let app = express();
 
@@ -38,28 +37,33 @@ let sockets = {
 		console.log("[websocket] Client Disconnected!");
 	},
 	getServers: async () => {
-		socket.emit("updateServers", await config.getServers());
+		socket.emit("updateServers", await Tumbot.config.getServers());
 	},
 	getUsers: async (serverId) => {
-		socket.emit("log", await config.getUsers(serverId));
+		socket.emit("log", await Tumbot.config.getUsers(serverId));
 	},
 	getModules: async (serverId) => {
-		socket.emit("updateModules", await config.getModules(serverId));
+		socket.emit("updateModules", await Tumbot.config.getModules(serverId));
 	},
 	getModule: async ({ serverId, moduleId }) => {
 		if (!serverId || !moduleId) return;
-		socket.emit("updateModule", await config.getModule({ serverId, moduleId }));
+		socket.emit("updateModule", await Tumbot.config.getModule({ serverId, moduleId }));
 	},
 	updateModule: async ({ serverId, moduleId, moduleConfig }) => {
 		if (!serverId || !moduleId || !moduleConfig) {
-			console.log("error updating module")
-			return;
+			return console.log("[webSocket] Server, Module or new Config not specified!");
 		}
 		let module = Tumbot.modules[moduleId];
 		if (module && module.updateConfig){
 			module.updateConfig(serverId, moduleConfig);
-			config.updateModule({serverId, moduleId, moduleConfig})
+			Tumbot.config.updateModule({serverId, moduleId, moduleConfig})
 		}
+	},
+	getLang: async ({serverId}) =>{
+		if(!serverId) return;
+		let module = await Tumbot.config.getModule({ serverId, moduleId:"core" }),
+			lang = module.lang||"en-gb";
+		socket.emit("updateLang",await Tumbot.lang.getLang(lang));
 	}
 };
 
