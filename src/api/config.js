@@ -22,21 +22,36 @@ async function getServers() {
 		return Tumbot.global.servers;
 	}
 
-	return [...new Set([
-		...db.map(s => s.id),
-		...(await Tumbot.bot.client.guilds.fetch()).map(s => s.id)
-	])];
+	let imgOptions={dynamic:true,size:16,format:"png"},
+	servers =  [
+		{
+			id:"all",
+			name:"Tumbot"
+		},
+		...(await Tumbot.bot.client.guilds.fetch()).map(guild => {
+			console.log(guild.name);
+			return {
+			id:guild.id,
+			name: guild.name,
+			acronym:guild.nameAcronym,
+			icon:guild.iconURL?guild.iconURL(imgOptions):null,
+			banner:guild.bannerURL?guild.bannerURL(imgOptions):null,
+			splash:guild.splashURL?guild.splashURL(imgOptions):null
+		}})
+	];
+
+	return servers;
 }
 
-function getServer(id = "all") {
+function getServer(id = "all",dm=false) {
 	if (Tumbot.global.modules) return Tumbot.global;
 	let server = db.find(server => server.id == id);
 	if (!server) {
 		server = {
-			id
+			id,dm
 		};
 		db.push(server);
-		console.log("Registered server: " + id);;
+		console.log("Registered server: " + id);
 	}
 	return server;
 }
