@@ -23,7 +23,8 @@ function t_throw(...args) {
 }
 
 
-function getServer(id) {
+function getServer(id="all") {
+	if(!id || id=="all") return {};
 	return client.guilds.cache.get(id);
 }
 
@@ -34,8 +35,8 @@ function getMember({serverId="all",userId}) {
 	if(serverId=="all") return getUser(userId);
 	return getServer(serverId).members.cache.get(userId);
 }
-function getChannel({serverId,channelId}) {
-	return getServer(serverId).channels.cache.get(channelId);
+function getChannel({channelId}) {
+	return client.channels.cache.get(channelId);
 }
 function getRole({serverId,roleId}) {
 	return getServer(serverId).roles.cache.get(roleId);
@@ -52,9 +53,8 @@ function onReady(cb) {
 
 async function onMessage(cb) {
 	client.on("messageCreate", async message => {
-		message.serverId = message.guild?message.guild.id:message.channel.id;
-		console.log("Message Detected:",{guild:message.guild?message.guild.id:"DM",channel:message.channel.id,content:message.content});
-		if (message.channel.type === 'dm') {console.log(message)}
+		message.isDm = message.guild?false:true;
+		message.serverId = message.isDm?message.channel.recipient.id:message.guild.id;
 		if (message.author.bot) return;
 		if (!message.tumbot) message.tumbot = {};
 		if (message.tumbot.done) return;

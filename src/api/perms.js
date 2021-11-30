@@ -32,11 +32,11 @@ async function hasPerm({message,userId=message.author.id,serverId=message.server
 
 	let perms = await getPerms({serverId,moduleId,command});
 	if(!perms) false;
-	if(Array.isArray(perms)) {
-		if(!perms) false;
-	} else {
+	if(!Array.isArray(perms)) {
 		return perms?true:false;
 	}
+	if(message.isDM) return true;
+	
 	if(void 0 != message&&void 0 != command) {
 		
 

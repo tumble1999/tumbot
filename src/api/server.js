@@ -43,7 +43,7 @@ let sockets = {
 		socket.emit("log", await Tumbot.config.getUsers(serverId));
 	},
 	getModules: async (serverId) => {
-		socket.emit("updateModules", await Tumbot.config.getModules(serverId));
+		socket.emit("updateModules", await Tumbot.config.getModules({serverId}));
 	},
 	getModule: async ({ serverId, moduleId }) => {
 		if (!serverId || !moduleId) return;

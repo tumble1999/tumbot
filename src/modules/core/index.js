@@ -8,7 +8,7 @@ Tumbot.bot.onReady(() => {
 	let servers = Tumbot.bot.client.guilds.cache.map(g => g.id);
 	console.log("["+MODULE_NAME+"] servers", servers);
 	servers.forEach(serverId => {
-		let config = Tumbot.config.getModule({ serverId, moduleId: MODULE_NAME });
+		let config = Tumbot.config.getModule({ serverId, moduleId: MODULE_NAME,dm:false });
 		console.log("["+MODULE_NAME+"]",serverId, config);
 
 		updateConfig(serverId, config);
@@ -27,7 +27,7 @@ function updateConfig(serverId, moduleConfig) {
 Tumbot.cmd.registerCommand(MODULE_NAME,"help",{
 	call: async (message, args) => {
 		let commands = Tumbot.commands,
-		config = Tumbot.config.getModule({serverId:message.serverId,moduleId:MODULE_NAME}),
+		config = Tumbot.config.getModule({message,serverId:message.serverId,moduleId:MODULE_NAME}),
 		list = (await mapAsync(
 			Object.keys(commands),
 			async cmd => {
@@ -76,7 +76,7 @@ setupEval();
 
 
 Tumbot.bot.onMessage(async message=>{
-	let config = Tumbot.config.getModule({serverId:message.serverId,user:message.guild?true:false,moduleId:MODULE_NAME}),
+	let config = Tumbot.config.getModule({message, serverId:message.serverId,moduleId:MODULE_NAME}),
 	content = message.content,
 	prefix = config.prefix;
 	if(!prefix) return false;
