@@ -1,3 +1,4 @@
+const { MessageActionRow, MessageButton } = require("discord.js");
 const { mapAsync, filterAsync } = require("../../util");
 const { setupEval } = require("./eval");
 
@@ -46,14 +47,25 @@ Tumbot.cmd.registerCommand(MODULE_NAME,"help",{
 			})).filter(cmd=>void 0 != cmd),
 			header = await Tumbot.lang.parse({config, id:"HELP_HEADER"}),
 			footer = await Tumbot.lang.parse({config, id:"HELP_FOOTER"});
-		message.reply(
+
+			const buttons = new MessageActionRow()
+			.addComponents(
+				new MessageButton()
+					.setStyle("LINK")
+					.setLabel('Web Panel')
+					.setURL("http://localhost:4000"),
+			);
+
+
+		message.reply({content:
 			header +
 			"\n```" +
 			(list.length == 0
 				? Tumbot.lang.parse({config, id:"HELP_EMPTY"})
 				: list.join("\n")) +
-			"```" + footer
-		);
+			"```" + footer,
+			components: [buttons]
+		});
 	}
 })
 Tumbot.cmd.registerCommand(MODULE_NAME,"ping",{
