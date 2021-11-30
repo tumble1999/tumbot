@@ -23,7 +23,7 @@ async function getPerms({serverId="all",moduleId,command}) {
 }
 
 
-async function hasPerm({message,userId=message.author.id,serverId=message.guild.id,moduleId,command}) {
+async function hasPerm({message,userId=message.author.id,serverId=message.serverId,moduleId,command}) {
 	if(void 0 != message) {
 		if(Tumbot.commands[command].perms){
 			return await Tumbot.commands[command].perms(message)

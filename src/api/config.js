@@ -9,7 +9,8 @@ let db = [
 				lang:"en-gb",
 				commands:{
 					help:true,
-					ping:[{type:"channel",id:"896401319835873280"}]
+					ping:true,
+					invite:true
 				}
 			},
 		}
@@ -35,6 +36,7 @@ function getServer(id = "all") {
 			id
 		};
 		db.push(server);
+		console.log("Registered server: " + id);;
 	}
 	return server;
 }

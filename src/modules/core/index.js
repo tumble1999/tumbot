@@ -27,7 +27,7 @@ function updateConfig(serverId, moduleConfig) {
 Tumbot.cmd.registerCommand(MODULE_NAME,"help",{
 	call: async (message, args) => {
 		let commands = Tumbot.commands,
-		config = Tumbot.config.getModule({serverId:message.guild.id,moduleId:MODULE_NAME}),
+		config = Tumbot.config.getModule({serverId:message.serverId,moduleId:MODULE_NAME}),
 		list = (await mapAsync(
 			Object.keys(commands),
 			async cmd => {
@@ -64,11 +64,19 @@ Tumbot.cmd.registerCommand(MODULE_NAME,"ping",{
 	}
 })
 
+Tumbot.cmd.registerCommand(MODULE_NAME,"invite",{
+	call:async (message,args)=>{
+		let perms = 3072,
+		link = "https://discord.com/oauth2/authorize?client_id="+message.client.user.id+"&scope=bot&permissions="+perms
+		message.reply("To add me to your own server click this link: "+link)
+	}
+})
+
 setupEval();
 
 
 Tumbot.bot.onMessage(async message=>{
-	let config = Tumbot.config.getModule({serverId:message.guild.id,moduleId:MODULE_NAME}),
+	let config = Tumbot.config.getModule({serverId:message.serverId,user:message.guild?true:false,moduleId:MODULE_NAME}),
 	content = message.content,
 	prefix = config.prefix;
 	if(!prefix) return false;

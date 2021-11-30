@@ -1,7 +1,10 @@
 const { Client, Intents } = require("discord.js");
 let
 	token = Tumbot.global.token,
-	client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
+	client = new Client({
+		intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES,Intents.FLAGS.DIRECT_MESSAGES,Intents.FLAGS.GUILD_MESSAGE_REACTIONS],
+		partials:['MESSAGE' ,'CHANNEL', 'REACTION']
+	});
 
 
 client.on("ready", () => {
@@ -49,6 +52,9 @@ function onReady(cb) {
 
 async function onMessage(cb) {
 	client.on("messageCreate", async message => {
+		message.serverId = message.guild?message.guild.id:message.channel.id;
+		console.log("Message Detected:",{guild:message.guild?message.guild.id:"DM",channel:message.channel.id,content:message.content});
+		if (message.channel.type === 'dm') {console.log(message)}
 		if (message.author.bot) return;
 		if (!message.tumbot) message.tumbot = {};
 		if (message.tumbot.done) return;
