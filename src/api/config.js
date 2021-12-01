@@ -2,17 +2,29 @@ const bot = require("./bot");
 let db = [
 	{
 		id: "all",
-		modules:{
-			core:{
-				nickname:"Tumbot Unstable",
-				prefix:"!",
-				lang:"en-gb",
-				commands:{
-					help:true,
-					ping:true,
-					invite:true
+		modules: {
+			core: {
+				nickname: "Tumbot Unstable",
+				prefix: "!",
+				lang: "en-gb",
+				commands: {
+					help: true,
+					ping: true,
+					invite: true
 				}
 			},
+			interviews: {
+				interviewCategory: "915296577717960714",
+				intervieweeRole: "915296697486278696",
+				questions: [
+					"do you like beans?",
+					"what about butter?",
+					"why are you doing this?"
+				],
+				commands: {
+					apply: true
+				}
+			}
 		}
 	}
 ];
@@ -22,54 +34,54 @@ async function getServers() {
 		return Tumbot.global.servers;
 	}
 
-	let imgOptions={dynamic:true,size:16,format:"png"},
-	servers =  [
-		// ...(await Tumbot.bot.client.guilds.fetch()).map(guild => {
-		// 	console.log(guild.name);
-		// 	return {
-		// 	id:guild.id,
-		// 	name: guild.name,
-		// 	acronym:guild.nameAcronym,
-		// 	icon:guild.iconURL?guild.iconURL(imgOptions):null,
-		// 	banner:guild.bannerURL?guild.bannerURL(imgOptions):null,
-		// 	splash:guild.splashURL?guild.splashURL(imgOptions):null
-		// }}),
-		...Object.values(db).map(server=>{
-			let guild;
-			if(server.id=="all"){
-				return {
-					id:"all",
-					name:"Tumbot"
+	let imgOptions = { dynamic: true, size: 16, format: "png" },
+		servers = [
+			// ...(await Tumbot.bot.client.guilds.fetch()).map(guild => {
+			// 	console.log(guild.name);
+			// 	return {
+			// 	id:guild.id,
+			// 	name: guild.name,
+			// 	acronym:guild.nameAcronym,
+			// 	icon:guild.iconURL?guild.iconURL(imgOptions):null,
+			// 	banner:guild.bannerURL?guild.bannerURL(imgOptions):null,
+			// 	splash:guild.splashURL?guild.splashURL(imgOptions):null
+			// }}),
+			...Object.values(db).map(server => {
+				let guild;
+				if (server.id == "all") {
+					return {
+						id: "all",
+						name: "Tumbot"
+					};
+				} else if (server.dm) {
+					guild = bot.getUser(server.id);
+				} else {
+					guild = bot.getServer(server.id);
 				}
-			} else if(server.dm) {
-				guild = bot.getUser(server.id);
-			}else {
-				guild = bot.getServer(server.id)
-			}
-			return {
-				id: guild.id,
-				name: server.dm?("@"+guild.tag):guild.name,
-				icon:server.dm?guild.displayAvatarURL(imgOptions):guild.iconURL(imgOptions),
-				//banner:guild.bannerURL?guild.bannerURL(imgOptions):null,
-				//splash:guild.splashURL?guild.splashURL(imgOptions):null
-			}
-		})
-	];
+				return {
+					id: guild.id,
+					name: server.dm ? ("@" + guild.tag) : guild.name,
+					icon: server.dm ? guild.displayAvatarURL(imgOptions) : guild.iconURL(imgOptions),
+					//banner:guild.bannerURL?guild.bannerURL(imgOptions):null,
+					//splash:guild.splashURL?guild.splashURL(imgOptions):null
+				};
+			})
+		];
 
 	return servers;
 }
 
-function getServer({message,serverId = "all",dm=false}={}) {
+function getServer({ message, serverId = "all", dm = false } = {}) {
 	if (Tumbot.global.modules) return Tumbot.global;
 	let server = db.find(server => server.id == serverId);
 
-	
+
 	if (!server) {
-		if(serverId!="all"&& void 0 !=message){
+		if (serverId != "all" && void 0 != message) {
 			dm = message.isDm;
 		}
 		server = {
-			id: serverId,dm
+			id: serverId, dm
 		};
 
 		db.push(server);
@@ -116,7 +128,7 @@ async function getUsers(serverId = "all") {
 			type: "user",
 			role: 10
 		});
-		let serverMembers = getServer({serverId}).users;
+		let serverMembers = getServer({ serverId }).users;
 		if (serverMembers)
 			users = users.concat(serverMembers.map(user => {
 				user.role = 12;
@@ -126,13 +138,13 @@ async function getUsers(serverId = "all") {
 	return users;
 }
 
-function getModules({serverId}={}) {
-	return Object.keys(getServer({serverId}).modules || {});
+function getModules({ serverId } = {}) {
+	return Object.keys(getServer({ serverId }).modules || {});
 }
 
-function getModule({message, serverId, moduleId ,dm}) {
-	let server = getServer({message,serverId,dm});
-	if(!server.modules)server.modules = {};
+function getModule({ message, serverId, moduleId, dm }) {
+	let server = getServer({ message, serverId, dm });
+	if (!server.modules) server.modules = {};
 	let module = server.modules[moduleId] || {};
 	module = Object.assign({}, getServer().modules[moduleId],
 		typeof module == "object" ? module : {}
@@ -140,8 +152,8 @@ function getModule({message, serverId, moduleId ,dm}) {
 	return module;
 }
 
-function updateModule({ serverId, moduleId, moduleConfig,message,dm }) {
-	getServer({serverId,message,dm}).modules[moduleId] = moduleConfig;
+function updateModule({ serverId, moduleId, moduleConfig, message, dm }) {
+	getServer({ serverId, message, dm }).modules[moduleId] = moduleConfig;
 }
 
 

@@ -59,11 +59,18 @@ let sockets = {
 			Tumbot.config.updateModule({serverId, moduleId, moduleConfig})
 		}
 	},
-	getLang: async ({serverId}) =>{
+	getLang: async ({serverId}={}) =>{
 		if(!serverId) return;
 		let module = await Tumbot.config.getModule({ serverId, moduleId:"core" }),
 			lang = module.lang||"en-gb";
 		socket.emit("updateLang",await Tumbot.lang.getLang(lang));
+	},
+	getPrefix: async ({serverId}={})=>{
+		if(!serverId) return;
+		let module = await Tumbot.config.getModule({ serverId, moduleId:"core" }),
+		prefix = module.prefix||"!";
+		socket.emit("updatePrefix",prefix);
+		
 	}
 };
 
