@@ -16,7 +16,11 @@ Tumbot.perms = require("./api/perms");
 
 (async ()=>{
 	Tumbot.modules = {};
-	for (const module of Tumbot.config.getModules()) {
+	if(!Tumbot.global.modules||!Array.isArray(Tumbot.global.modules)||Tumbot.global.modules.length==0) {
+		console.log("[Tumbot] There are no modules.");
+		return;
+	}
+	for (const module of Tumbot.global.modules) {
 		Tumbot.modules[module] = require(`./modules/${module}`);
 		console.log("[tumbot] Registered module:", module,Tumbot.modules[module]);
 	}

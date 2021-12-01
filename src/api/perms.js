@@ -6,7 +6,7 @@ function log(...args) {
 
 async function getPerms({serverId="all",moduleId,command}) {
 	if(!moduleId&&!command) {
-		return getUsers(serverId);
+		return await getUsers(serverId);
 	}
 	else if(!moduleId||!command) {
 		log("Module or command not given");

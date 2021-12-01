@@ -39,11 +39,11 @@ let sockets = {
 	getServers: async () => {
 		socket.emit("updateServers", await Tumbot.config.getServers());
 	},
-	getUsers: async (serverId) => {
+	getUsers: async ({serverId}) => {
 		socket.emit("log", await Tumbot.config.getUsers(serverId));
 	},
-	getModules: async (serverId) => {
-		socket.emit("updateModules", await Tumbot.config.getModules({serverId}));
+	getModules: async ({serverId}) => {
+		socket.emit("updateModules", await Tumbot.config.getModules(serverId));
 	},
 	getModule: async ({ serverId, moduleId }) => {
 		if (!serverId || !moduleId) return;
@@ -56,7 +56,7 @@ let sockets = {
 		let module = Tumbot.modules[moduleId];
 		if (module && module.updateConfig){
 			module.updateConfig(serverId, moduleConfig);
-			Tumbot.config.updateModule({serverId, moduleId, moduleConfig})
+			await Tumbot.config.updateModule({serverId, moduleId, moduleConfig})
 		}
 	},
 	getLang: async ({serverId}={}) =>{

@@ -21,7 +21,8 @@ async function listLang() {
 
 
 async function parse({serverId,config , id, macros = {}, nocode}) {
-	if (void 0 == config) config = Tumbot.config.getModule({serverId,moduleId:"core"});
+	if (void 0 == config) config = await Tumbot.config.getModule({serverId,moduleId:"core"});
+	if(!config.lang) config.lang = "en-gb";
 	let langFile = getLang(config.lang);
 
 	if (!langFile[id]) return nocode ? id : "`" + id + "`";
@@ -32,7 +33,7 @@ async function parse({serverId,config , id, macros = {}, nocode}) {
 		text = text.split("$" + macro).join(value);
 	}
 	log(`[${config.lang}] ${id}: ${text}`);
-	return text;
+	return text||"";
 }
 
 async function timeSince({serverId,config, date}) {

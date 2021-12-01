@@ -89,6 +89,10 @@ async function ask({
 	});
 }
 
+async function createEmbed(obj) {
+
+}
+
 module.exports = {
 	client,
 	getServer,
