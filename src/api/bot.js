@@ -41,6 +41,28 @@ function getChannel({ channelId }) {
 function getRole({ serverId, roleId }) {
 	return getServer(serverId).roles.cache.get(roleId);
 }
+
+function onReady(cb) {
+	if (client.isReady()) {
+		cb();
+	} else {
+		client.on("ready", cb);
+	}
+}
+
+
+async function onMessage(cb) {
+	client.on("messageCreate", async message => {
+		message.isDm = message.guild ? false : true;
+		message.serverId = message.isDm ? message.channel.recipient.id : message.guild.id;
+		if (message.author.bot) return;
+		if (!message.tumbot) message.tumbot = {};
+		if (message.tumbot.done) return;
+		message.tumbot.done = await cb(message);
+	});
+};
+
+
 async function ask({
 	userId,
 	user = getUser(userId),
@@ -66,26 +88,6 @@ async function ask({
 		user.send(question.prompt);
 	});
 }
-
-function onReady(cb) {
-	if (client.isReady()) {
-		cb();
-	} else {
-		client.on("ready", cb);
-	}
-}
-
-
-async function onMessage(cb) {
-	client.on("messageCreate", async message => {
-		message.isDm = message.guild ? false : true;
-		message.serverId = message.isDm ? message.channel.recipient.id : message.guild.id;
-		if (message.author.bot) return;
-		if (!message.tumbot) message.tumbot = {};
-		if (message.tumbot.done) return;
-		message.tumbot.done = await cb(message);
-	});
-};
 
 module.exports = {
 	client,
