@@ -1,14 +1,14 @@
 const bot = require("./bot"),
 	{ mapAsync } = require("../util"),
 	{ connect, disconnect } = require("./db"),
-	TUMBOT_DB = "tumbot",
+	TUMBOT_DB = Tumbot.global.db.database,
 	SERVERS_COLLECTION = "servers";
-let client, CACHE = [
+let dbClient, CACHE = [
 	{
 		serverId: "all",
 		modules: {
 			core: {
-				nickname: "Tumbot Unstable",
+				nickname: "",
 				prefix: "!",
 				lang: "en-gb",
 				commands: {
@@ -27,13 +27,13 @@ let client, CACHE = [
 ];
 
 async function getCollection() {
-	client = await connect();
-	let db = client.db(TUMBOT_DB),
+	dbClient = await connect();
+	let db = dbClient.db(TUMBOT_DB),
 		collection = db.collection(SERVERS_COLLECTION);
 	return collection;
 }
 async function closeDB() {
-	await disconnect(client);
+	await disconnect(dbClient);
 }
 
 async function getServers() {

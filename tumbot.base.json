@@ -5,7 +5,8 @@
 	"db":{
 		"url":"db.example.com",
 		"user":"db_user",
-		"password":"abc123"
+		"password":"abc123",
+		"database":""
 	},
 	"modules":{}
 }
