@@ -23,7 +23,8 @@ server.listen(port, () => {
 
 let io = new Server(server, {
 	cors: {
-		origin: ["https://tumble1999.github.io:*","http://localhost:4000"],
+		//origin: ["https://tumble1999.github.io:*","http://localhost:4000"],
+		origin:function (origin, callback) {callback(null,true)},
 		methods: ["GET", "POST"]
 	}
 });
