@@ -15,7 +15,7 @@ app.get('/', (req, res) => {
 });
 
 let server = http.createServer(app),
-	port = Tumbot.global.port;
+	port = process.env.PORT||Tumbot.global.port;
 
 server.listen(port, () => {
 	console.log('[webSocket] Listening on *:' + port);

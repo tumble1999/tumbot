@@ -4,7 +4,7 @@ global.Tumbot = {
 	global:process.env.TUMBOT||require("../tumbot.json"),
 	root: path.join(__dirname, "..")
 };
-Tumbot.global = require("../tumbot.json");
+if(typeof Tumbot.global=="string") Tumbot.global = JSON.parse(Tumbot.global);
 Tumbot.config = require("./api/config");
 Tumbot.lang = require("./api/lang");
 Tumbot.server = require("./api/server");
