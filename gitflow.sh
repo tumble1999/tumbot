@@ -1,7 +1,7 @@
 #!/bin/bash
 
-echo "master
-develop
+echo "stable
+unstable
 feature/
 bugfix/
 release/
