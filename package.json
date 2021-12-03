@@ -10,13 +10,15 @@
     "watch": "nodemon"
   },
   "engines": {
-	  "node":"^16.10.0",
-	  "yarn":"^1.22.15"
+    "node": "^16.10.0",
+    "yarn": "^1.22.15"
   },
   "dependencies": {
     "discord.js": "^13.3.1",
     "express": "^4.17.1",
     "mongodb": "^4.2.1",
+    "passport": "^0.5.0",
+    "passport-discord": "^0.1.4",
     "socket.io": "^4.4.0"
   },
   "devDependencies": {}

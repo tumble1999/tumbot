@@ -11,6 +11,7 @@ Tumbot.server = require("./api/server");
 Tumbot.bot = require("./api/bot");
 Tumbot.cmd = require("./api/cmd");
 Tumbot.perms = require("./api/perms");
+Tumbot.oauth = require("./api/oauth");
 
 
 

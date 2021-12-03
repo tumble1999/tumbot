@@ -4,7 +4,7 @@ function clean(text) {
 	else
 		text = text.toString().replace(/`/g, "`" + String.fromCharCode(8203)).replace(/@/g, "@" + String.fromCharCode(8203));
 
-	return text.split(Tumbot.global.token).join("*********");
+	return text.split(Tumbot.global.discord.token).join("*********");
 }
 
 function eval(code, context) {
