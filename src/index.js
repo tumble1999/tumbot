@@ -1,7 +1,7 @@
 const path = require("path");
 
 global.Tumbot = {
-	global:require("../tumbot.json"),
+	global:process.env.TUMBOT||require("../tumbot.json"),
 	root: path.join(__dirname, "..")
 };
 Tumbot.global = require("../tumbot.json");

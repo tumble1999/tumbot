@@ -9,6 +9,10 @@
     "start": "node src/index.js",
     "watch": "nodemon"
   },
+  "engines": {
+	  "node":"^16.10.0",
+	  "yarn":"^1.22.15"
+  },
   "dependencies": {
     "discord.js": "^13.3.1",
     "express": "^4.17.1",
