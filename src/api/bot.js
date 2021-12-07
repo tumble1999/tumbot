@@ -1,14 +1,27 @@
-const { Client, Intents } = require("discord.js");
+const { SlashCommandBuilder } = require("@discordjs/builders"),
+	{ default: Collection } = require("@discordjs/collection"),
+	{ Client, Intents, Interaction, MessageEmbed } = require("discord.js"),
+	{ REST } = require('@discordjs/rest'),
+	{ Routes } = require('discord-api-types/v9'),
+	{ CommandFailedEvent } = require("mongodb"),
+	{ mapAsync } = require("../util");
+
 let
 	token = Tumbot.global.discord.token,
 	client = new Client({
 		intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS],
 		partials: ['MESSAGE', 'CHANNEL', 'REACTION']
-	});
+	}),
+	rest = new REST({ version: '9' }).setToken(token),
+	clientId;
+
+
+Tumbot.commands = new Collection();
 
 
 client.on("ready", () => {
 	log(`Logged in as ${client.user.tag}!`);
+	clientId = client.user.id;
 });
 
 client.login(token);
@@ -62,6 +75,11 @@ async function onMessage(cb) {
 	});
 };
 
+async function onInteraction(cb) {
+	client.on("interactionCreate", async interaction => {
+		cb(interaction);
+	});
+};
 
 async function ask({
 	userId,
@@ -89,9 +107,57 @@ async function ask({
 	});
 }
 
-async function createEmbed(obj) {
-
+async function refreshCommands({ serverId = "all", commands }) {
+	if (!commands) commands = (await mapAsync(
+		Tumbot.commands,
+		async (command, commandId) => {
+			log(commandId, command);
+			if (command.slash) {
+				if (!command.description) command.slash.setDescription(await Tumbot.lang.parse({ serverId, id: `CMD_${commandId.toUpperCase()}_DESC`, nocode: true }));
+				return command.slash.toJSON();
+			}
+		})).filter(cmd => void 0 != cmd);
+	await rest.put(
+		Routes.applicationGuildCommands(clientId, serverId),
+		{ body: commands },
+	);
 }
+
+
+async function registerCommand(moduleId, commandId, cmd = {}) {
+	if (void 0 == commandId || void 0 == cmd.call) {
+		t_throw("Invalid command setup:", cmd);
+	}
+	if (Tumbot.commands.has(commandId)) {
+		log("Command already exists:", commandId);
+	}
+	cmd.name = commandId;
+	cmd.module = moduleId;
+	if (!cmd.slash) {
+		cmd.slash = new SlashCommandBuilder().setName(commandId);
+	}
+	Tumbot.commands.set(commandId, cmd);
+	log("Registered command:", cmd.module + "::" + cmd.name);
+}
+
+async function createEmbed(obj) {
+	let embed = new MessageEmbed().setTimestamp();
+
+	//embed.addField
+	for(let key in obj) {
+		switch (key) {
+			case "title":
+				embed.setTitle(obj[key])
+				break;
+		
+			default:
+				embed.addField(key,obj[key],true);
+		}
+	}
+
+	return embed;
+}
+
 
 module.exports = {
 	client,
@@ -102,5 +168,9 @@ module.exports = {
 	onMessage,
 	getChannel,
 	getRole,
-	ask
+	onInteraction,
+	refreshCommands,
+	registerCommand,
+	ask,
+	createEmbed
 };

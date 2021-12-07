@@ -51,7 +51,7 @@ io.on('connection', socket => {
 			if (!serverId || !moduleId || !moduleConfig) {
 				return console.log("[webSocket] Server, Module or new Config not specified!");
 			}
-			let module = Tumbot.modules[moduleId];
+			let module = Tumbot.modules.get(moduleId);
 			if (module && module.updateConfig) {
 				module.updateConfig(serverId, moduleConfig);
 				await Tumbot.config.updateModule({ serverId, moduleId, moduleConfig });
@@ -68,7 +68,10 @@ io.on('connection', socket => {
 			let module = await Tumbot.config.getModule({ serverId, moduleId: "core" }),
 				prefix = module.prefix || "!";
 			socket.emit("updatePrefix", prefix);
-
+		},
+		login: async ({code})=>{
+			let info = await Tumbot.oauth.getUserInfo({accessToken:code});
+			console.log(info.id);
 		}
 	};
 

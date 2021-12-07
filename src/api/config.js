@@ -9,17 +9,18 @@ let dbClient, CACHE = [
 		modules: {
 			core: {
 				nickname: "",
-				prefix: "!",
 				lang: "en-gb",
 				commands: {
 					help: true,
 					ping: true,
-					invite: true
+					invite: true,
+					echo:true
 				}
 			},
 			experiments: {
 				commands: {
-					ask: true
+					ask: true,
+					embed:true
 				}
 			}
 		}
@@ -157,12 +158,10 @@ async function getUsers(serverId = "all") {
 }
 
 async function getModules(serverId = "all") {
-	let modules = Tumbot.modules;
-	return mapAsync(Object.keys(modules), moduleId => {
-		let module = modules[moduleId],
-			config = getModule({ serverId, moduleId });
+	return mapAsync(Tumbot.modules, (module,moduleId) => {
+		let config = getModule({ serverId, moduleId });
 		return {
-			moduleId: moduleId,
+			moduleId,
 			//name: Tumbot.lang.parse({ serverId, id: "MODULE_" + moduleId.toUpperCase() + "_NAME" }),
 			//description: Tumbot.lang.parse({ serverId, id: "MODULE_" + moduleId.toUpperCase() + "DESCRIPTION" }),
 			dm: module.dm || false,
