@@ -1,40 +1,50 @@
-const passport = require('passport'),
-	DiscordStrategy = require('passport-discord').Strategy;
-	let fetch;
+const //{default: fetch } = require('node-fetch'),
+	passport = require('passport'),
+	DiscordStrategy = require('passport-discord').Strategy,
+	//refresh = require('passport-oauth2-refresh'),
+	{ default: Collection } = require('@discordjs/collection'),
+	users = new Collection;
+let fetch;
+
+(async ()=>{
+	let {default:f} = await import('node-fetch');
+	fetch = f;
+	return fetch;
+})().then(console.log)
+
 
 Tumbot.bot.client.on('ready', () => {
-	passport.use(new DiscordStrategy({
+	let discordStrategy = new DiscordStrategy({
 		clientID: Tumbot.bot.client.user.id,
 		clientSecret: Tumbot.global.discord.secret,
 		callback: Tumbot.global.discord.callback,
-		scope: ['identify']
+		scope: ['identify'],
+		
 	},
 		function (accessToken, refreshToken, profile, cb) {
-			console.log({ accessToken, refreshToken, profile });
-			return cb({}, { h: "hello world" });
-		}));
+			profile.refreshToken = refreshToken;
+			users.set(accessToken,profile);
+			return cb(undefined, accessToken);
+		});
+	passport.use(discordStrategy);
 
 });
 
-async function getUserInfo({ tokenType = "Bearer", accessToken }) {
-
-	if(!fetch) {
-		// node-fetch is an ESM-only module - you are not able to import it with require.
-		// Source: https://stackoverflow.com/questions/69087292/requirenode-fetch-gives-err-require-esm
-		fetch = await import('node-fetch')
-		fetch = fetch.default
-	}
-	
-let response = await fetch('https://discord.com/api/users/@me', {
-		headers: {
-			authorization: `${tokenType} ${accessToken}`,
-		},
-	});
-	return await response.json();
+async function getUserInfo({ accessToken }) {
+	return users.get(accessToken);
 }
 
 let app = Tumbot.server.app;
+app.use(passport.initialize()); 
 app.get('/auth/discord', passport.authenticate('discord'));
+app.get('/auth/discord/callback', passport.authenticate('discord', {
+    failureRedirect: Tumbot.global.webpanel,
+	session: false
+}), function(req, res) {
+	let url = new URL(Tumbot.global.webpanel);
+	url.searchParams.set("code",req.user)
+	res.redirect(url);
+});
 
 module.exports = {
 	passport,

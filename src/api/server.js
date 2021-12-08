@@ -71,9 +71,9 @@ io.on('connection', socket => {
 		},
 		login: async ({code})=>{
 			let info = await Tumbot.oauth.getUserInfo({accessToken:code});
-			console.log(info.id);
+			console.log(info);
 		}
-	};
+	}
 
 	for (const ev in sockets) {
 		socket.on(ev, async (...args) => {

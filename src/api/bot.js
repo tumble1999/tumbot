@@ -158,6 +158,29 @@ async function createEmbed(obj) {
 	return embed;
 }
 
+function getBotInviteLink() {
+	return client.generateInvite({
+		scopes:["bot","applications.commands"],
+		permissions: [
+			Permissions.FLAGS.MANAGE_ROLES,
+			Permissions.FLAGS.MANAGE_CHANNELS,
+			Permissions.FLAGS.CHANGE_NICKNAME,
+			Permissions.FLAGS.MANAGE_WEBHOOKS,
+			//Permissions.FLAGS.MANAGE_EVENTS,//TODO: GET NUMBER
+			Permissions.FLAGS.SEND_MESSAGES,
+			Permissions.FLAGS.CREATE_PUBLIC_THREADS,
+			Permissions.FLAGS.CREATE_PRIVATE_THREADS,
+			Permissions.FLAGS.SEND_MESSAGES_IN_THREADS,
+			Permissions.FLAGS.EMBED_LINKS,
+			Permissions.FLAGS.ATTACH_FILES,
+			Permissions.FLAGS.USE_EXTERNAL_EMOJIS,
+			Permissions.FLAGS.USE_EXTERNAL_STICKERS,
+			Permissions.FLAGS.ADD_REACTIONS,
+			Permissions.FLAGS.MOVE_MEMBERS
+		],
+		});
+}
+
 
 module.exports = {
 	client,
@@ -172,5 +195,6 @@ module.exports = {
 	refreshCommands,
 	registerCommand,
 	ask,
-	createEmbed
+	createEmbed,
+	getBotInviteLink
 };
