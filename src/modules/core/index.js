@@ -102,7 +102,7 @@ Tumbot.bot.registerCommand(MODULE_NAME, "help", {
 Tumbot.bot.registerCommand(MODULE_NAME, "ping", {
 	call: async interaction => {
 		if (void 0 != interaction.interaction) return interaction.reply(await Tumbot.lang.parse({ serverId: interaction.guildId, id: "PING_NOT_AVAILABLE" }));
-		interaction.replyExclusive(await Tumbot.lang.parse({ serverId: interaction.guildId, id: "PING_RESPONSE", macros: { PING: Date.now() - interaction.createdTimestamp } }));
+		interaction.reply(await Tumbot.lang.parse({ serverId: interaction.guildId, id: "PING_RESPONSE", macros: { PING: Date.now() - interaction.createdTimestamp } }));
 	}
 });
 
