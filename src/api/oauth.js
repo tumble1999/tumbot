@@ -34,6 +34,10 @@ async function getUserInfo({ accessToken }) {
 	return users.get(accessToken);
 }
 
+async function removeUserInfo({accessToken}) {
+	users.delete(accessToken);
+}
+
 let app = Tumbot.server.app;
 app.use(passport.initialize()); 
 app.get('/auth/discord', passport.authenticate('discord'));
@@ -48,5 +52,6 @@ app.get('/auth/discord/callback', passport.authenticate('discord', {
 
 module.exports = {
 	passport,
-	getUserInfo
+	getUserInfo,
+	removeUserInfo
 };

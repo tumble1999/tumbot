@@ -34,18 +34,26 @@ io.on('connection', socket => {
 		disconnect: () => {
 			console.log("[websocket] Client Disconnected!");
 		},
-		getServers: async () => {
-			socket.emit("updateServers", await Tumbot.config.getServers());
-		},
-		getUsers: async ({ serverId }) => {
-			socket.emit("log", await Tumbot.config.getUsers(serverId));
-		},
-		getModules: async ({ serverId }) => {
-			socket.emit("updateModules", await Tumbot.config.getModules(serverId));
-		},
-		getModule: async ({ serverId, moduleId }) => {
-			if (!serverId || !moduleId) return;
-			socket.emit("updateModule", await Tumbot.config.getModule({ serverId, moduleId }));
+		login: async ({ code, serverId, moduleId }) => {
+			let info = await Tumbot.oauth.getUserInfo({ accessToken: code });
+			socket.login = info;
+			if (info) {
+				socket.emit("updateLogin", info);
+				socket.emit("updateServers", await Tumbot.config.getServers());
+				socket.emit("updateUsers", await Tumbot.config.getUsers(serverId));
+				socket.emit("updateModules", await Tumbot.config.getModules(serverId));
+
+				let core = await Tumbot.config.getModule({ serverId, moduleId: "core" }),
+					lang = core.lang || "en-gb",
+					prefix = core.prefix || "!";
+				socket.emit("updateLang", await Tumbot.lang.getLang(lang));
+				socket.emit("updatePrefix", prefix);
+
+				socket.emit("updateModule", await Tumbot.config.getModule({ serverId, moduleId }));
+
+			} else {
+				socket.emit("refreshLogin");
+			}
 		},
 		updateModule: async ({ serverId, moduleId, moduleConfig }) => {
 			if (!serverId || !moduleId || !moduleConfig) {
@@ -57,23 +65,12 @@ io.on('connection', socket => {
 				await Tumbot.config.updateModule({ serverId, moduleId, moduleConfig });
 			}
 		},
-		getLang: async ({ serverId } = {}) => {
-			if (!serverId) return;
-			let module = await Tumbot.config.getModule({ serverId, moduleId: "core" }),
-				lang = module.lang || "en-gb";
-			socket.emit("updateLang", await Tumbot.lang.getLang(lang));
-		},
-		getPrefix: async ({ serverId } = {}) => {
-			if (!serverId) return;
-			let module = await Tumbot.config.getModule({ serverId, moduleId: "core" }),
-				prefix = module.prefix || "!";
-			socket.emit("updatePrefix", prefix);
-		},
-		login: async ({code})=>{
-			let info = await Tumbot.oauth.getUserInfo({accessToken:code});
-			console.log(info);
+		logout: async () => {
+			if (socket.login) {
+				Tumbot.oauth.removeUserInfo({ accessToken: socket.login.accessToken });
+			}
 		}
-	}
+	};
 
 	for (const ev in sockets) {
 		socket.on(ev, async (...args) => {
