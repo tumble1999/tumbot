@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require("@discordjs/builders"),
 	{ default: Collection } = require("@discordjs/collection"),
-	{ Client, Intents, Interaction, MessageEmbed } = require("discord.js"),
+	{ Client, Intents, Interaction, MessageEmbed, Permissions } = require("discord.js"),
 	{ REST } = require('@discordjs/rest'),
 	{ Routes } = require('discord-api-types/v9'),
 	{ CommandFailedEvent } = require("mongodb"),
