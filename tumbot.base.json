@@ -1,6 +1,5 @@
 {
 	"port":3000,
-	"token":"abc123",
 	"owners":["123456"],
 	"discord":{
 		"token":"abc123s",
