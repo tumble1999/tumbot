@@ -10,13 +10,20 @@
     "watch": "nodemon"
   },
   "engines": {
-	  "node":"^16.10.0",
-	  "yarn":"^1.22.15"
+    "node": "^16.10.0",
+    "yarn": "^1.22.15"
   },
   "dependencies": {
+    "@discordjs/builders": "^0.9.0",
+    "@discordjs/rest": "^0.1.0-canary.0",
+    "discord-api-types": "^0.25.2",
     "discord.js": "^13.3.1",
     "express": "^4.17.1",
     "mongodb": "^4.2.1",
+    "node-fetch": "^3.1.0",
+    "passport": "^0.5.0",
+    "passport-discord": "^0.1.4",
+    "passport-oauth2-refresh": "^2.1.0",
     "socket.io": "^4.4.0"
   },
   "devDependencies": {}

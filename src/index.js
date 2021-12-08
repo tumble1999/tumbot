@@ -1,3 +1,4 @@
+const { default: Collection } = require("@discordjs/collection");
 const path = require("path");
 
 global.Tumbot = {
@@ -9,19 +10,20 @@ Tumbot.config = require("./api/config");
 Tumbot.lang = require("./api/lang");
 Tumbot.server = require("./api/server");
 Tumbot.bot = require("./api/bot");
-Tumbot.cmd = require("./api/cmd");
 Tumbot.perms = require("./api/perms");
+Tumbot.oauth = require("./api/oauth");
 
 
 
 (async ()=>{
-	Tumbot.modules = {};
+	Tumbot.modules = new Collection();
 	if(!Tumbot.global.modules||!Array.isArray(Tumbot.global.modules)||Tumbot.global.modules.length==0) {
 		console.log("[Tumbot] There are no modules.");
 		return;
 	}
-	for (const module of Tumbot.global.modules) {
-		Tumbot.modules[module] = require(`./modules/${module}`);
-		console.log("[tumbot] Registered module:", module,Tumbot.modules[module]);
+	for (const moduleId of Tumbot.global.modules) {
+		let module = require(`./modules/${moduleId}`);
+		Tumbot.modules.set(moduleId,module);
+		console.log("[tumbot] Registered module:", moduleId,module);
 	}
 })();

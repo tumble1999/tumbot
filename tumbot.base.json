@@ -1,12 +1,16 @@
 {
 	"port":3000,
-	"token":"abc123",
 	"owners":["123456"],
+	"discord":{
+		"token":"abc123s",
+		"secret":"abc123",
+		"callback":"http://example.com/auth/discord/callback"
+	},
 	"db":{
 		"url":"db.example.com",
 		"user":"db_user",
 		"password":"abc123",
-		"database":""
+		"database":"tumbot"
 	},
 	"modules":{}
 }

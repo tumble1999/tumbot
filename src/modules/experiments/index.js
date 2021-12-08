@@ -1,17 +1,27 @@
 const MODULE_NAME = "experiments";
 
-Tumbot.cmd.registerCommand(MODULE_NAME, "ask", {
-	call: async (message, args) => {
-		message.reply("Finding your DMs");
+Tumbot.bot.registerCommand(MODULE_NAME, "ask", {
+	call: async interaction => {
+		interaction.reply("Finding your DMs");
 
 		Tumbot.bot.ask({
-			user: message.author,
+			user: interaction.author,
 			question: "What is 1+1?"
-		}).then(m=>{
-			message.reply(
-			`___**${question}**__
-			*${answer}*`
+		}).then((question)=>{
+			interaction.reply(
+`___**${question.prompt}**__
+${question.response}*`
 			)
 		});
 	}
 });
+
+Tumbot.bot.registerCommand(MODULE_NAME,"embed",{
+	call: async interaction=>{
+		interaction.reply({
+			embeds:[
+				await Tumbot.bot.createEmbed({a:"b",c:"d"})
+			]
+		})
+	}
+})
