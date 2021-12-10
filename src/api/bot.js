@@ -111,7 +111,7 @@ async function refreshCommands({ serverId = "all", commands }) {
 	if (!commands) commands = (await mapAsync(
 		Tumbot.commands,
 		async (command, commandId) => {
-			log(commandId, command);
+			//log(commandId, command);
 			if (command.slash) {
 				if (!command.description) command.slash.setDescription(await Tumbot.lang.parse({ serverId, id: `CMD_${commandId.toUpperCase()}_DESC`, nocode: true }));
 				return command.slash.toJSON();

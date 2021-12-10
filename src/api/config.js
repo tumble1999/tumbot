@@ -1,5 +1,4 @@
-const bot = require("./bot"),
-	{ mapAsync } = require("../util"),
+const { mapAsync } = require("../util"),
 	{ connect, disconnect } = require("./db"),
 	TUMBOT_DB = Tumbot.global.db.database,
 	SERVERS_COLLECTION = "servers";
@@ -13,14 +12,13 @@ let dbClient, CACHE = [
 				commands: {
 					help: true,
 					ping: true,
-					invite: true,
-					echo:true
+					echo: true
 				}
 			},
 			experiments: {
 				commands: {
 					ask: true,
-					embed:true
+					embed: true
 				}
 			}
 		}
@@ -37,7 +35,7 @@ async function closeDB() {
 	await disconnect(dbClient);
 }
 
-async function getServers() {
+async function getServers({ userId } = {}) {
 	if (Tumbot.global.servers) {
 		return Tumbot.global.servers;
 	}
@@ -52,17 +50,18 @@ async function getServers() {
 	}
 	let imgOptions = { dynamic: true, size: 16, format: "png" };
 
-	return Object.values(CACHE).map(server => {
+	let servers = (await mapAsync(Object.values(CACHE), async server => {
 		let guild;
+		if (userId && !await  Tumbot.perms.hasPerm({ serverId: server.serverId, userId })) return null;
 		if (server.serverId == "all") {
 			return {
 				serverId: "all",
 				name: "Tumbot"
 			};
 		} else if (server.dm) {
-			guild = bot.getUser(server.serverId);
+			guild = Tumbot.bot.getUser(server.serverId);
 		} else {
-			guild = bot.getServer(server.serverId);
+			guild = Tumbot.bot.getServer(server.serverId);
 		}
 		return {
 			serverId: server.serverId,
@@ -71,10 +70,12 @@ async function getServers() {
 			banner: guild.bannerURL ? guild.bannerURL(imgOptions) : null,
 			splash: guild.splashURL ? guild.splashURL(imgOptions) : null
 		};
-	});
+	})).filter(s => !!s);
+	console.log(servers.map(s => s.name));
+	return servers;
 }
 
-async function getServer({ message, serverId = "all", dm = false } = {}) {
+async function getServer({ message, userId, serverId = "all", dm = false } = {}) {
 	if (Tumbot.global.servers && Tumbot.global.modules && Array.isArray(Tumbot.global.modules) && typeof Tumbot.global.modules[0] !== "string") return Tumbot.global;
 	if (message) serverId = message.guild.id;
 
@@ -135,14 +136,15 @@ async function getUsers(serverId = "all") {
 	*/
 	let users = getOwners(),
 		serverUsers = await getServer().users || [];
-	users = users.concat(serverUsers.map(user => {
-		user.role = 1;
-		return user;
-	}));
+	users = users.concat(
+		serverUsers.map(user => {
+			user.role = 1;
+			return user;
+		}));
 	if (serverId != "all") {
-		let serverOwner = await bot.getServer(serverId).fetchOwner();
+		let serverOwner = await Tumbot.bot.getServer(serverId).fetchOwner();
 		users.push({
-			id: serverOwner.userId,
+			id: serverOwner.id,
 			name: serverOwner.displayName,
 			type: "user",
 			role: 10
@@ -158,7 +160,7 @@ async function getUsers(serverId = "all") {
 }
 
 async function getModules(serverId = "all") {
-	return mapAsync(Tumbot.modules, (module,moduleId) => {
+	return mapAsync(Tumbot.modules, (module, moduleId) => {
 		let config = getModule({ serverId, moduleId });
 		return {
 			moduleId,

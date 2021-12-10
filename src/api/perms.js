@@ -1,19 +1,19 @@
-const { getUsers, getModule } = require("./config");
+const config = require("./config");
 
 function log(...args) {
 	return console.log("[Perms]",...args);
 }
 
-async function getPerms({serverId="all",moduleId,commandId}) {
+async function getPerms({message,serverId="all",moduleId,commandId}) {
 	if(!moduleId&&!commandId) {
-		return await getUsers(serverId);
+		return await config.getUsers(serverId);
 	}
 	else if(!moduleId||!commandId) {
 		log("Module or command not given");
 		return null;
 	}
 	else {
-		let module = await getModule({serverId,moduleId});
+		let module = await config.getModule({message,serverId,moduleId});
 		if(!module.commands){
 			log("Module has no enabled commands");
 			return null;
@@ -23,7 +23,7 @@ async function getPerms({serverId="all",moduleId,commandId}) {
 }
 
 
-async function hasPerm({message,userId=message.author.id,serverId=message.serverId,moduleId,commandId}) {
+async function hasPerm({message,userId=message&&message.author?message.author.id:"",serverId=message?message.serverId:"all",moduleId,commandId}={}) {
 	if(void 0 != message) {
 		let command = Tumbot.commands.get(commandId);
 		if(command.perms){
@@ -31,12 +31,12 @@ async function hasPerm({message,userId=message.author.id,serverId=message.server
 		}
 	}
 
-	let perms = await getPerms({serverId,moduleId,commandId});
+	let perms = await getPerms({message,serverId,moduleId,commandId});
 	if(!perms) false;
 	if(!Array.isArray(perms)) {
 		return perms?true:false;
 	}
-	if(message.isDM) return true;
+	if(message && message.isDM) return true;
 	
 	if(void 0 != message&&void 0 != commandId) {
 		
@@ -54,7 +54,7 @@ async function hasPerm({message,userId=message.author.id,serverId=message.server
 	}
 	let users = perms.filter(p=>p.type=="user").map(p=>p.id);
 	if(users&&users.length&&!users.includes(userId)) {
-		log(`User @${message.author.name}#${message.author.tag} denied for command ${commandId}.`)
+		log(`User @${message?message.author.name+"#"+message.author.tag:userId} denied for `+commandId?"command "+commandId:"server "+serverId)
 		return false;
 	}
 	return true;

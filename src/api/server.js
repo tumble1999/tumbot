@@ -39,11 +39,12 @@ io.on('connection', socket => {
 			socket.login = info;
 			if (info) {
 				socket.emit("updateLogin", info);
-				socket.emit("updateServers", await Tumbot.config.getServers());
+				socket.emit("updateInvite", Tumbot.bot.getBotInviteLink());
+				socket.emit("updateServers", await Tumbot.config.getServers({userId:info.id}));
 				socket.emit("updateUsers", await Tumbot.config.getUsers(serverId));
 				socket.emit("updateModules", await Tumbot.config.getModules(serverId));
 
-				let core = await Tumbot.config.getModule({ serverId, moduleId: "core" }),
+				let core = await Tumbot.config.getModule({serverId, moduleId: "core" }),
 					lang = core.lang || "en-gb",
 					prefix = core.prefix || "!";
 				socket.emit("updateLang", await Tumbot.lang.getLang(lang));
