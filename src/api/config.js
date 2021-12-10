@@ -52,7 +52,7 @@ async function getServers({ userId } = {}) {
 
 	let servers = (await mapAsync(Object.values(CACHE), async server => {
 		let guild;
-		if (userId && !await  Tumbot.perms.hasPerm({ serverId: server.serverId, userId })) return null;
+		if (userId && !await Tumbot.perms.hasPerm({ serverId: server.serverId, userId })) return null;
 		if (server.serverId == "all") {
 			return {
 				serverId: "all",
@@ -62,7 +62,10 @@ async function getServers({ userId } = {}) {
 			guild = Tumbot.bot.getUser(server.serverId);
 		} else {
 			guild = Tumbot.bot.getServer(server.serverId);
+		
 		}
+		if(!guild) return;
+
 		return {
 			serverId: server.serverId,
 			name: server.dm ? ("@" + guild.tag) : guild.name,
@@ -142,7 +145,11 @@ async function getUsers(serverId = "all") {
 			return user;
 		}));
 	if (serverId != "all") {
-		let serverOwner = await Tumbot.bot.getServer(serverId).fetchOwner();
+		let server = await Tumbot.bot.getServer(serverId);
+		if(!server) {
+			return
+		}
+		let serverOwner = await server.fetchOwner();
 		users.push({
 			id: serverOwner.id,
 			name: serverOwner.displayName,
@@ -206,11 +213,25 @@ async function updateModule({ serverId, moduleId, moduleConfig, message, dm }) {
 	await closeDB();
 }
 
+async function removeServer(serverId) {
+	//remove from cache
+	CACHE = CACHE.filter(server => server.serverId != serverId);
+
+	//remove from db
+	console.log("[config] Connecting to db remove a server");
+	let collection = await getCollection();
+	if (await collection.findOne({ serverId }))
+		await collection.deleteOne({ serverId });
+	await closeDB();
+
+}
+
 
 module.exports = {
 	getServers,
 	getUsers,
 	getModules,
 	getModule,
-	updateModule
+	updateModule,
+	removeServer
 };

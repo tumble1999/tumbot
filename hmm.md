@@ -2,6 +2,7 @@ Lang
 	config (require)
 Bot
 	lang (direct)
+	config (require)
 Perms
 	config (require)
 Config

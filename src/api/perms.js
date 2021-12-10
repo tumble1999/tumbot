@@ -39,8 +39,6 @@ async function hasPerm({message,userId=message&&message.author?message.author.id
 	if(message && message.isDM) return true;
 	
 	if(void 0 != message&&void 0 != commandId) {
-		
-
 		let channels = perms.filter(p=>p.type=="channel").map(p=>p.id),
 			roles = perms.filter(p=>p.type=="role").map(p=>p.id);
 		if(channels&&channels.length&&!channels.includes(message.channel.id)) {
@@ -54,7 +52,7 @@ async function hasPerm({message,userId=message&&message.author?message.author.id
 	}
 	let users = perms.filter(p=>p.type=="user").map(p=>p.id);
 	if(users&&users.length&&!users.includes(userId)) {
-		log(`User @${message?message.author.name+"#"+message.author.tag:userId} denied for `+commandId?"command "+commandId:"server "+serverId)
+		log(`User ${userId} denied for ${commandId?"command":"server"} ${commandId||serverId}`)
 		return false;
 	}
 	return true;

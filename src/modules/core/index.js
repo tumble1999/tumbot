@@ -6,6 +6,7 @@ const { setupEval } = require("./eval");
 const MODULE_NAME = "core";
 
 
+
 Tumbot.bot.onReady(() => {
 	let servers = Tumbot.bot.client.guilds.cache.map(g => g.id);
 	console.log("[" + MODULE_NAME + "] servers", servers);

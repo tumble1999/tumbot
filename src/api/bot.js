@@ -4,7 +4,8 @@ const { SlashCommandBuilder } = require("@discordjs/builders"),
 	{ REST } = require('@discordjs/rest'),
 	{ Routes } = require('discord-api-types/v9'),
 	{ CommandFailedEvent } = require("mongodb"),
-	{ mapAsync } = require("../util");
+	{ mapAsync } = require("../util"),
+	{ getServers, getModule, removeServer } = require("./config");
 
 let
 	token = Tumbot.global.discord.token,
@@ -19,9 +20,35 @@ let
 Tumbot.commands = new Collection();
 
 
-client.on("ready", () => {
+client.on("ready", async () => {
 	log(`Logged in as ${client.user.tag}!`);
 	clientId = client.user.id;
+
+	// for each server in db
+	let dbServers = await getServers();
+	dbServers.forEach(serverId=>{
+		//if not in server
+		if(!client.guilds.cache.get(serverId))
+			//clean up server
+			cleanupServer(serverId);
+		
+	})
+
+	//for Each server
+	client.guilds.cache.get(({id})=>{
+		//Init server
+		initializeServer(id)
+	})
+});
+
+client.on("guildCreate", async ({id}) => {
+	//Init Server
+	initializeServer(id)
+});
+
+client.on("guildDelete", async ({id})  => {
+	//Cleanup Server
+	cleanupServer(id);
 });
 
 client.login(token);
@@ -181,6 +208,32 @@ function getBotInviteLink() {
 		});
 }
 
+
+
+async function initializeServer(serverId) {
+	log("Initializing Server " + serverId);
+	// For Each Module
+	for (const moduleId of Tumbot.global.modules) {
+		let module = Tumbot.modules.get(moduleId),
+		moduleConfig = await getModule({serverId,moduleId});
+		if(module && module.updateConfig && moduleConfig)
+		//UpdateConfig
+			await module.updateConfig(serverId,moduleConfig);
+	}
+	
+	//Update Commands
+	await Tumbot.bot.refreshCommands({ serverId });
+}
+
+async function cleanupServer(serverId) {
+	log("Cleaning Server " + serverId);
+	//Leave server
+	let guild = client.guilds.cache.get(serverId);
+	if(guild) await guild.leave();
+
+	//remove server from database
+	await removeServer(serverId);
+}
 
 module.exports = {
 	client,
