@@ -4,7 +4,8 @@ const { SlashCommandBuilder } = require("@discordjs/builders"),
 	{ REST } = require('@discordjs/rest'),
 	{ Routes } = require('discord-api-types/v9'),
 	{ CommandFailedEvent } = require("mongodb"),
-	{ mapAsync } = require("../util");
+	{ mapAsync } = require("../util"),
+	{ getServers, getModule, removeServer } = require("./config");
 
 let
 	token = Tumbot.global.discord.token,
@@ -19,9 +20,35 @@ let
 Tumbot.commands = new Collection();
 
 
-client.on("ready", () => {
+client.on("ready", async () => {
 	log(`Logged in as ${client.user.tag}!`);
 	clientId = client.user.id;
+
+	// for each server in db
+	let dbServers = await getServers();
+	dbServers.forEach(serverId=>{
+		//if not in server
+		if(!client.guilds.cache.get(serverId))
+			//clean up server
+			cleanupServer(serverId);
+		
+	})
+
+	//for Each server
+	client.guilds.cache.get(({id})=>{
+		//Init server
+		initializeServer(id)
+	})
+});
+
+client.on("guildCreate", async ({id}) => {
+	//Init Server
+	initializeServer(id)
+});
+
+client.on("guildDelete", async ({id})  => {
+	//Cleanup Server
+	cleanupServer(id);
 });
 
 client.login(token);
@@ -111,7 +138,7 @@ async function refreshCommands({ serverId = "all", commands }) {
 	if (!commands) commands = (await mapAsync(
 		Tumbot.commands,
 		async (command, commandId) => {
-			log(commandId, command);
+			//log(commandId, command);
 			if (command.slash) {
 				if (!command.description) command.slash.setDescription(await Tumbot.lang.parse({ serverId, id: `CMD_${commandId.toUpperCase()}_DESC`, nocode: true }));
 				return command.slash.toJSON();
@@ -162,25 +189,39 @@ function getBotInviteLink() {
 	return client.generateInvite({
 		scopes:["bot","applications.commands"],
 		permissions: [
-			Permissions.FLAGS.MANAGE_ROLES,
-			Permissions.FLAGS.MANAGE_CHANNELS,
 			Permissions.FLAGS.CHANGE_NICKNAME,
-			Permissions.FLAGS.MANAGE_WEBHOOKS,
-			//Permissions.FLAGS.MANAGE_EVENTS,//TODO: GET NUMBER
 			Permissions.FLAGS.SEND_MESSAGES,
-			Permissions.FLAGS.CREATE_PUBLIC_THREADS,
-			Permissions.FLAGS.CREATE_PRIVATE_THREADS,
-			Permissions.FLAGS.SEND_MESSAGES_IN_THREADS,
-			Permissions.FLAGS.EMBED_LINKS,
-			Permissions.FLAGS.ATTACH_FILES,
-			Permissions.FLAGS.USE_EXTERNAL_EMOJIS,
-			Permissions.FLAGS.USE_EXTERNAL_STICKERS,
-			Permissions.FLAGS.ADD_REACTIONS,
-			Permissions.FLAGS.MOVE_MEMBERS
+			Permissions.FLAGS.VIEW_CHANNEL
 		],
 		});
 }
 
+
+
+async function initializeServer(serverId) {
+	log("Initializing Server " + serverId);
+	// For Each Module
+	for (const moduleId of Tumbot.global.modules) {
+		let module = Tumbot.modules.get(moduleId),
+		moduleConfig = await getModule({serverId,moduleId});
+		if(module && module.updateConfig && moduleConfig)
+		//UpdateConfig
+			await module.updateConfig(serverId,moduleConfig);
+	}
+	
+	//Update Commands
+	await Tumbot.bot.refreshCommands({ serverId });
+}
+
+async function cleanupServer(serverId) {
+	log("Cleaning Server " + serverId);
+	//Leave server
+	let guild = client.guilds.cache.get(serverId);
+	if(guild) await guild.leave();
+
+	//remove server from database
+	await removeServer(serverId);
+}
 
 module.exports = {
 	client,

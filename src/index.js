@@ -6,11 +6,14 @@ global.Tumbot = {
 	root: path.join(__dirname, "..")
 };
 if(typeof Tumbot.global=="string") Tumbot.global = JSON.parse(Tumbot.global);
-Tumbot.config = require("./api/config");
+
 Tumbot.lang = require("./api/lang");
-Tumbot.server = require("./api/server");
 Tumbot.bot = require("./api/bot");
 Tumbot.perms = require("./api/perms");
+
+Tumbot.config = require("./api/config");
+
+Tumbot.server = require("./api/server");
 Tumbot.oauth = require("./api/oauth");
 
 

@@ -38,22 +38,37 @@ io.on('connection', socket => {
 			let info = await Tumbot.oauth.getUserInfo({ accessToken: code });
 			socket.login = info;
 			if (info) {
+				let userId = info.id;
 				socket.emit("updateLogin", info);
-				socket.emit("updateServers", await Tumbot.config.getServers());
+				socket.emit("updateInvite", Tumbot.bot.getBotInviteLink());
+				socket.emit("updateServers", await Tumbot.config.getServers({userId}));
+
+				if (userId && !await Tumbot.perms.hasPerm({ serverId, userId })) {
+					socket.emit("updateResponse",403);
+					return;
+				};
+
+				socket.emit("updateResponse",200);
 				socket.emit("updateUsers", await Tumbot.config.getUsers(serverId));
 				socket.emit("updateModules", await Tumbot.config.getModules(serverId));
 
-				let core = await Tumbot.config.getModule({ serverId, moduleId: "core" }),
+				let core = await Tumbot.config.getModule({serverId, moduleId: "core" }),
 					lang = core.lang || "en-gb",
 					prefix = core.prefix || "!";
 				socket.emit("updateLang", await Tumbot.lang.getLang(lang));
 				socket.emit("updatePrefix", prefix);
 
-				socket.emit("updateModule", await Tumbot.config.getModule({ serverId, moduleId }));
+				socket.emit("updateModule", await Tumbot.config.getModule({serverId, moduleId }));
 
 			} else {
 				socket.emit("refreshLogin");
 			}
+		},
+		getModules:async ({serverId})=>{
+			socket.emit("updateModules", await Tumbot.config.getModules(serverId));
+		},
+		getModule:async ({serverId,moduleId})=>{
+			socket.emit("updateModule", await Tumbot.config.getModule({serverId, moduleId }));
 		},
 		updateModule: async ({ serverId, moduleId, moduleConfig }) => {
 			if (!serverId || !moduleId || !moduleConfig) {

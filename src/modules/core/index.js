@@ -6,31 +6,32 @@ const { setupEval } = require("./eval");
 const MODULE_NAME = "core";
 
 
+
 Tumbot.bot.onReady(() => {
 	let servers = Tumbot.bot.client.guilds.cache.map(g => g.id);
 	console.log("[" + MODULE_NAME + "] servers", servers);
-	servers.forEach(async serverId => {
-		let config = await Tumbot.config.getModule({ serverId, moduleId: MODULE_NAME, dm: false });
-		console.log("[" + MODULE_NAME + "]", serverId, config);
+	// servers.forEach(async serverId => {
+	// 	let config = await Tumbot.config.getModule({ serverId, moduleId: MODULE_NAME, dm: false });
+	// 	console.log("[" + MODULE_NAME + "]", serverId, config);
 
-		updateConfig(serverId, config);
-		Tumbot.bot.refreshCommands({ serverId });
-	});
+	// 	updateConfig(serverId, config);
+	// 	Tumbot.bot.refreshCommands({ serverId });
+	// });
 	//Tumbot.bot.refreshCommands();
 });
+// Tumbot.bot.client.on("guildCreate", async guild => {
+// 	let serverId = guild.id,
+// 	config = await Tumbot.config.getModule({ serverId, moduleId: MODULE_NAME, dm: false });
+// 	console.log("[" + MODULE_NAME + "]", serverId, config);
 
-Tumbot.bot.client.on("guildCreate", async guild => {
-	let serverId = guild.id,
-	config = await Tumbot.config.getModule({ serverId, moduleId: MODULE_NAME, dm: false });
-	console.log("[" + MODULE_NAME + "]", serverId, config);
+// 	updateConfig(serverId, config);
+// 	Tumbot.bot.refreshCommands({ serverId });
 
-	updateConfig(serverId, config);
-	Tumbot.bot.refreshCommands({ serverId });
+// });
+// Tumbot.bot.client.on("guildDelete", async guild => {
 
-});
-Tumbot.bot.client.on("guildDelete", async guild => {
+// });
 
-});
 
 function updateConfig(serverId, moduleConfig) {
 	if (!moduleConfig) return;
