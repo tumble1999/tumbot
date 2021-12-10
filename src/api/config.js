@@ -167,7 +167,7 @@ async function getUsers(serverId = "all") {
 }
 
 async function getModules(serverId = "all") {
-	return mapAsync(Tumbot.modules, (module, moduleId) => {
+	let modules = await mapAsync(Tumbot.modules, (module, moduleId) => {
 		let config = getModule({ serverId, moduleId });
 		return {
 			moduleId,
@@ -177,6 +177,9 @@ async function getModules(serverId = "all") {
 			active: config ? true : false
 		};
 	});
+
+	console.log(modules.map(m => m.name||m.moduleId));
+	return modules
 	//return Object.keys(await getServer({ serverId }).modules || {});
 }
 
